@@ -1,0 +1,9 @@
+# Godot 4
+.godot/
+*.translation
+
+# OS
+.DS_Store
+
+# Temp capture script output (also committed as screenshot.png for docs)
+# user:// screenshots go to Application Support

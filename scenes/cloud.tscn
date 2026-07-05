@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://e0q5mcloud0001"]
+
+[ext_resource type="Script" path="res://scripts/cloud.gd" id="1_cloud"]
+[ext_resource type="PackedScene" uid="uid://b7k2mraindrop01" path="res://scenes/rain_drop.tscn" id="2_rain"]
+
+[node name="Cloud" type="CharacterBody2D"]
+position = Vector2(640, 120)
+script = ExtResource("1_cloud")
+rain_scene = ExtResource("2_rain")
+
+[node name="Body" type="Polygon2D" parent="."]
+color = Color(0.92, 0.94, 0.98, 0.92)
+polygon = PackedVector2Array(-52, 8, -34, -18, -8, -28, 22, -22, 48, -6, 56, 12, 28, 18, -28, 18)
+
+[node name="Highlight" type="Polygon2D" parent="."]
+color = Color(1, 1, 1, 0.35)
+polygon = PackedVector2Array(-28, -6, -10, -18, 12, -16, 24, -4, 8, 2, -16, 0)
+
+[node name="Shadow" type="Polygon2D" parent="."]
+position = Vector2(0, 28)
+color = Color(0, 0, 0, 0.15)
+polygon = PackedVector2Array(-40, 0, 40, 0, 32, 6, -32, 6)
