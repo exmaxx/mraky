@@ -15,3 +15,7 @@ polygon = PackedVector2Array(-52, 8, -34, -18, -8, -28, 22, -22, 48, -6, 56, 12,
 [node name="Highlight" type="Polygon2D" parent="."]
 color = Color(1, 1, 1, 0.35)
 polygon = PackedVector2Array(-28, -6, -10, -18, 12, -16, 24, -4, 8, 2, -16, 0)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0

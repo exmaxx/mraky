@@ -1,8 +1,12 @@
 extends Node2D
 
 const DESIGN_SIZE := Vector2(1280.0, 720.0)
+const WORLD_MARGIN_X := DESIGN_SIZE.x
+const WORLD_LEFT := -WORLD_MARGIN_X
+const WORLD_WIDTH := DESIGN_SIZE.x + WORLD_MARGIN_X * 2.0
 const GROUND_HEIGHT := 160.0
 const LAND_MERGE_RADIUS := 22.0
+const CLOUD_EDGE_MARGIN := 60.0
 
 @export var tree_scene: PackedScene
 @export var land_scene: PackedScene
@@ -23,6 +27,7 @@ var _ground_y: float = DESIGN_SIZE.y - GROUND_HEIGHT
 
 func _ready() -> void:
 	_apply_stretch_settings()
+	_setup_world_bounds()
 	ground.rained_at.connect(_on_ground_rained)
 	cloud.lightning_requested.connect(_on_cloud_lightning)
 	_scatter_initial_tree_groups()
@@ -35,6 +40,24 @@ func _apply_stretch_settings() -> void:
 	win.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP
 
 
+func _setup_world_bounds() -> void:
+	sky.offset_left = WORLD_LEFT
+	sky.offset_right = WORLD_LEFT + WORLD_WIDTH
+	ground_visual.offset_left = WORLD_LEFT
+	ground_visual.offset_right = WORLD_LEFT + WORLD_WIDTH
+	ground.position.x = WORLD_LEFT
+	ground.set_ground_width(WORLD_WIDTH)
+	cloud.world_bounds_x = Vector2(
+		WORLD_LEFT + CLOUD_EDGE_MARGIN,
+		WORLD_LEFT + WORLD_WIDTH - CLOUD_EDGE_MARGIN
+	)
+	var camera := cloud.get_node("Camera2D") as Camera2D
+	camera.limit_left = int(WORLD_LEFT)
+	camera.limit_right = int(WORLD_LEFT + WORLD_WIDTH)
+	camera.limit_top = 0
+	camera.limit_bottom = int(DESIGN_SIZE.y)
+
+
 func _get_ground_strike_y() -> float:
 	return ground.global_position.y
 
@@ -42,7 +65,7 @@ func _get_ground_strike_y() -> float:
 func _scatter_initial_tree_groups() -> void:
 	var group_count := 5
 	for _g in group_count:
-		var center_x := randf_range(140.0, DESIGN_SIZE.x - 140.0)
+		var center_x := randf_range(WORLD_LEFT + 140.0, WORLD_LEFT + WORLD_WIDTH - 140.0)
 		var tree_count := randi_range(3, 6)
 		for _i in tree_count:
 			var x := center_x + randf_range(-50.0, 50.0)

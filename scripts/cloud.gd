@@ -8,6 +8,7 @@ const LIGHTNING_COOLDOWN := 0.7
 
 @export var rain_scene: PackedScene
 
+var world_bounds_x := Vector2(60.0, 1220.0)
 var _rain_cooldown := 0.0
 var _lightning_cooldown := 0.0
 
@@ -16,6 +17,7 @@ func _physics_process(delta: float) -> void:
 	var direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	velocity = direction * MOVE_SPEED
 	move_and_slide()
+	position.x = clampf(position.x, world_bounds_x.x, world_bounds_x.y)
 
 	_rain_cooldown = maxf(_rain_cooldown - delta, 0.0)
 	if Input.is_action_pressed("rain") and _rain_cooldown <= 0.0:
