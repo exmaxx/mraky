@@ -1,17 +1,24 @@
 extends Node
 
-const MIN_INTERVAL := 2.5
-const MAX_INTERVAL := 5.5
+const MIN_INTERVAL := 7.0
+const MAX_INTERVAL := 14.0
+const STRIKE_RANGE_X := 90.0
 
 @export var lightning_scene: PackedScene
 
-var _trees: Array[Node] = []
+var _trees: Array[TreeCell] = []
 var _timer := 2.0
+var _get_ground_y: Callable
 
 
-func setup(trees: Array[Node]) -> void:
+func setup(trees: Array[TreeCell], get_ground_y: Callable) -> void:
 	_trees = trees
+	_get_ground_y = get_ground_y
 	_timer = randf_range(MIN_INTERVAL, MAX_INTERVAL)
+
+
+func register_tree(tree: TreeCell) -> void:
+	_trees.append(tree)
 
 
 func _process(delta: float) -> void:
@@ -20,21 +27,33 @@ func _process(delta: float) -> void:
 		return
 
 	_timer = randf_range(MIN_INTERVAL, MAX_INTERVAL)
-	_strike_random_tree()
+	var cloud: Node2D = get_tree().current_scene.get_node("World/Cloud")
+	strike_at(cloud.global_position)
 
 
-func _strike_random_tree() -> void:
-	var candidates: Array[Node] = []
+func strike_at(from_position: Vector2) -> void:
+	var strike_position := Vector2(from_position.x, _get_ground_y.call())
+	var target := _find_nearest_tree(from_position)
+	if target:
+		strike_position = target.global_position
+		target.ignite()
+
+	_spawn_lightning(strike_position)
+
+
+func _find_nearest_tree(from_position: Vector2) -> TreeCell:
+	var best: TreeCell = null
+	var best_dist := STRIKE_RANGE_X
 	for tree in _trees:
-		if is_instance_valid(tree) and tree.has_method("can_be_struck") and tree.can_be_struck():
-			candidates.append(tree)
-
-	if candidates.is_empty():
-		return
-
-	var target: Node = candidates.pick_random()
-	_spawn_lightning(target.global_position)
-	target.ignite()
+		if not is_instance_valid(tree):
+			continue
+		if not tree.can_be_struck():
+			continue
+		var dist := absf(tree.global_position.x - from_position.x)
+		if dist < best_dist:
+			best_dist = dist
+			best = tree
+	return best
 
 
 func _spawn_lightning(target_position: Vector2) -> void:

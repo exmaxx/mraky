@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://b82n0pnnr0o7y"]
+
+[ext_resource type="Script" path="res://scripts/land_patch.gd" id="1_land"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_land"]
+radius = 12.0
+
+[node name="LandPatch" type="Area2D"]
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("1_land")
+
+[node name="Patch" type="Polygon2D" parent="."]
+color = Color(0.52, 0.38, 0.22, 1)
+polygon = PackedVector2Array(-5, 0, -3, -1, 0, -2, 3, -1, 5, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -4)
+shape = SubResource("CircleShape2D_land")
